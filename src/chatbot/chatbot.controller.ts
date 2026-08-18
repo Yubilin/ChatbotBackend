@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException } from '@nestjs/common';
 import { ChatbotService } from './chatbot.service';
 import { CreateChatbotDto } from './dto/create-chatbot.dto';
 import { UpdateChatbotDto } from './dto/update-chatbot.dto';
@@ -7,11 +7,18 @@ import { UpdateChatbotDto } from './dto/update-chatbot.dto';
 export class ChatbotController {
   constructor(private readonly chatbotService: ChatbotService) {}
 
-  @Post()
-  create(@Body() createChatbotDto: CreateChatbotDto) {
-    return this.chatbotService.create(createChatbotDto);
-  }
+  // CAMBIO: endpoint POST /chatbot/preguntar
+  // Recibe { "mensaje": "..." } y devuelve la respuesta del chatbot.
+  @Post('preguntar')
+  preguntar(@Body('mensaje') mensaje: string) {
+    // CAMBIO: validación para no romper el servicio si el mensaje viene vacío
+    if (!mensaje || !mensaje.trim()) {
+      throw new BadRequestException('El campo mensaje es obligatorio');
+    }
 
+    return this.chatbotService.preguntar(mensaje);
+  }
+  
   @Get()
   findAll() {
     return this.chatbotService.findAll();

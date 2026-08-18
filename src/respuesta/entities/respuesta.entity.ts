@@ -7,7 +7,9 @@ export class Respuesta {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    //  la respuesta puede ser larga (teléfonos, horarios, procedimientos)
+    // y VARCHAR(255) no alcanza; se usa TEXT para admitir textos extensos.
+    @Column({ type: 'text' })
     respuesta: string;
 
     @ManyToOne(() => Categoria, categoria => categoria.respuesta)
