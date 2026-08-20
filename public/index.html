@@ -80,6 +80,8 @@
       font-weight: 600;
     }
 
+    .mensaje strong { font-weight: 700; }
+
     form {
       display: flex;
       gap: 8px;
@@ -139,12 +141,25 @@
     const input = document.getElementById('input');
 
     // Agrega un mensaje a la conversación
+    function escaparHtml(texto) {
+      const div = document.createElement('div');
+      div.textContent = texto;
+      return div.innerHTML;
+    }
+
+    function formatearRespuesta(texto) {
+      return escaparHtml(texto).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    }
+
     function agregarMensaje(texto, tipo, categoria) {
       const div = document.createElement('div');
       div.className = 'mensaje ' + tipo;
 
       if (tipo === 'bot' && categoria) {
-        div.innerHTML = texto + '<span class="categoria">📂 ' + categoria + '</span>';
+        div.innerHTML = formatearRespuesta(texto) +
+          '<span class="categoria">📂 ' + escaparHtml(categoria) + '</span>';
+      } else if (tipo === 'bot') {
+        div.innerHTML = formatearRespuesta(texto);
       } else {
         div.textContent = texto;
       }

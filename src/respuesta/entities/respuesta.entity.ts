@@ -6,9 +6,6 @@ import { PalabraClave } from 'src/palabra-clave/entities/palabra-clave.entity';
 export class Respuesta {
     @PrimaryGeneratedColumn()
     id: number;
-
-    //  la respuesta puede ser larga (teléfonos, horarios, procedimientos)
-    // y VARCHAR(255) no alcanza; se usa TEXT para admitir textos extensos.
     @Column({ type: 'text' })
     respuesta: string;
 

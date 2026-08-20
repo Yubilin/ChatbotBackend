@@ -9,12 +9,7 @@ import { Chatbot } from '../chatbot/entities/chatbot.entity';
 import { Consulta } from '../consulta/entities/consulta.entity';
 
 /*
-|--------------------------------------------------------------------------
-| CONEXIÓN A LA BASE DE DATOS
-|--------------------------------------------------------------------------
-| CAMBIO: el seed ahora lee las credenciales desde el archivo .env
-| (igual que la aplicación) y sincroniza las tablas automáticamente,
-| así basta con ejecutar `npm run seed` sin necesidad de crear tablas a mano.
+| Conexcion DB
 */
 const dataSource = new DataSource({
   type: 'mysql',
@@ -58,12 +53,9 @@ async function seed() {
     console.log('Datos anteriores eliminados');
 
     /*
-    |--------------------------------------------------------------------------
-    | CATEGORÍAS
-    |--------------------------------------------------------------------------
-    | CAMBIO: base de conocimiento ampliada con los temas que el chatbot
-    | debe cubrir: contactos, decanatos, pagos, plataforma, aulas, sistema
-    | modular, atención, servicios, estudiantes nuevos y datos personales.
+    CATEGORIAS
+
+    contactos, decanatos, pagos, plataforma, aulas, sistema modular, atencion, servicios, estudiantes nuevos y datos personales.
     */
 
     const marketing = await categoriaRepository.save(
@@ -76,14 +68,14 @@ async function seed() {
     const pagos = await categoriaRepository.save(
       categoriaRepository.create({
         nombre: 'Pagos',
-        descripcion: 'Cajas, fechas límite y procedimientos de pago',
+        descripcion: 'Cajas, fechas límite y procedimientos de pago modaliad precencial como semiprecencial',
       }),
     );
 
     const plataforma = await categoriaRepository.save(
       categoriaRepository.create({
         nombre: 'Plataforma',
-        descripcion: 'Funcionamiento de la plataforma universitaria',
+        descripcion: 'Funcionamiento de la plataforma universitaria y problemas de acceso',
       }),
     );
 
@@ -97,7 +89,7 @@ async function seed() {
     const aulas = await categoriaRepository.save(
       categoriaRepository.create({
         nombre: 'Aulas',
-        descripcion: 'Ubicación de aulas, bloques y edificios',
+        descripcion: 'Otogar un link que redirige al portal academico del estudiante',
       }),
     );
 
@@ -122,20 +114,6 @@ async function seed() {
       }),
     );
 
-    const estudiantesNuevos = await categoriaRepository.save(
-      categoriaRepository.create({
-        nombre: 'Estudiantes Nuevos',
-        descripcion: 'Inscripción, matrícula, requisitos y dudas frecuentes',
-      }),
-    );
-
-    const directorio = await categoriaRepository.save(
-      categoriaRepository.create({
-        nombre: 'Directorio',
-        descripcion: 'Teléfonos y contactos de las diferentes áreas',
-      }),
-    );
-
     const informacionPersonal = await categoriaRepository.save(
       categoriaRepository.create({
         nombre: 'Información Personal',
@@ -143,28 +121,28 @@ async function seed() {
       }),
     );
 
+    const carreras = await categoriaRepository.save(
+      categoriaRepository.create({
+        nombre: 'Carreras',
+        descripcion: 'Información sobre las carreras profesionales',
+      }),
+    );
     /*
-    |--------------------------------------------------------------------------
-    | RESPUESTAS
-    |--------------------------------------------------------------------------
-    | CAMBIO: cada respuesta incluye teléfonos, nombres de responsables,
-    | ubicaciones y horarios para que el chatbot sea realmente útil.
+      RESPUESTAS
     */
 
     const respuestaMarketing = await respuestaRepository.save(
       respuestaRepository.create({
         respuesta: `
-Área de Marketing
+          Área de Marketing
+          Responsable: Lic. Andrés Cueto  (Asesor Comercial).
+          Ubicación: Edificio Administrativo, planta baja 
+          Celular: 74163220
+          Horario de atención: lunes a viernes de 08:00 a 12:30 y de 15:00 a 19:30 Sábado: 8:30 a 12:30 
+          Funciones: comunicación institucional, actividades, campañas y
+          difusión de información universitaria. 
 
-Responsable: Lic. María Fernanda Rojas (Jefa de Comunicación).
-Ubicación: Edificio Administrativo, segundo piso, oficina 204.
-Teléfono: 4-645-1234.
-Correo: marketing@universidad.edu.bo.
-Horario de atención: lunes a viernes de 08:00 a 16:00.
-
-Funciones: comunicación institucional, actividades, campañas y
-difusión de información universitaria. Si quieres participar en
-una actividad, acércate a esta oficina.
+          Si quieres participar en una actividad, acércate a esta oficina.
         `.trim(),
         categoria: marketing,
       }),
@@ -173,29 +151,29 @@ una actividad, acércate a esta oficina.
     const respuestaPagos = await respuestaRepository.save(
       respuestaRepository.create({
         respuesta: `
-Pagos y Cajas
+          Pagos y Cajas
 
-Caja Central:
-Ubicación: Planta baja del Edificio Administrativo.
-Teléfono: 4-645-1100.
-Horario: lunes a viernes de 08:00 a 16:00.
+          Caja Central:
+          Ubicación: Planta baja del Edificio Administrativo.
+          Celular: 69672492
+          Horario: lunes a viernes de 08:00 a 12:30 y 15:00 a 19:30 .
 
-Medios de pago: efectivo, tarjeta de débito, depósito o transferencia bancaria.
-Se entrega comprobante de cada pago: conserva siempre tu recibo.
+          Medios de pago: efectivo, tarjeta de débito, depósito o transferencia bancaria.
+          Se entrega comprobante de cada pago: conserva siempre tu recibo.
 
-Fechas límite de pago:
-- Matrícula: primera quincena del periodo correspondiente.
-- Cuotas mensuales: vencen el día 10 de cada mes.
-- Las fechas exactas se publican en el calendario académico oficial;
-  consúltalo siempre antes de pagar.
+          Fechas límite de pago:
+          - Matrícula: primera quincena del periodo correspondiente.
+          - Cuotas mensuales: vencen el día 10 de cada mes.
+          - Las fechas exactas se publican en el calendario académico oficial;
+            consúltalo siempre antes de pagar.
 
-Procedimiento de pago:
-1. Acércate a la Caja Central con tu carnet universitario o cédula de identidad.
-2. Indica el concepto de pago (matrícula, cuota, arancel).
-3. Realiza el pago y conserva el comprobante.
+          Procedimiento de pago:
+          1. Acércate a la Caja Central con tu carnet universitario o cédula de identidad.
+          2. Indica el concepto de pago (matrícula, cuota, arancel).
+          3. Realiza el pago y conserva el comprobante.
 
-Si tienes deudas o mora, acude a la Caja para regularizar tu situación
-y evitar recargos.
+          Si tienes deudas o mora, acude a la Caja para regularizar tu situación
+          y evitar recargos.
         `.trim(),
         categoria: pagos,
       }),
@@ -204,23 +182,32 @@ y evitar recargos.
     const respuestaPlataforma = await respuestaRepository.save(
       respuestaRepository.create({
         respuesta: `
-Plataforma Universitaria
+          Plataforma Universitaria
 
-La plataforma permite consultar información académica, realizar trámites
-y acceder a los servicios institucionales.
+          sirve para que el estudiante pueda gestionar y consultar diferentes aspectos
+          académicos. Entre sus funciones están consultar materias y horarios, 
+          revisar calificaciones, acceder a información académica, realizar o consultar 
+          actividades, revisar comunicados, gestionar procesos relacionados con la inscripción 
+          y matrícula y acceder a recursos o servicios que la universidad pone a disposición 
+          de los estudiantes.
 
-Ingreso: utiliza tu usuario y contraseña proporcionados por la universidad.
-¿Olvidaste tu contraseña? Usa la opción "¿Olvidaste tu contraseña?" en la
-página de inicio de la plataforma.
+          Entrega de Trabajos: los estudiantes pueden subir sus tareas y trabajos
+          se entregan mediante la plataforma universitaria virtual, dentro de la materia correspondiente. 
+          El docente publica la actividad, indica las instrucciones y la fecha límite,
+          y el estudiante debe subir allí el archivo o trabajo solicitado.
 
-Problemas para iniciar sesión: comunícate con la Mesa de Ayuda
-(Teléfono: 4-645-1300, correo: mesadeayuda@universidad.edu.bo)
-o con el área de sistemas.
+          Ingreso: utiliza tu usuario y contraseña proporcionados por la universidad.
+          ¿Olvidaste tu contraseña? Usa la opción "¿Olvidaste tu contraseña?" en la
+          página de inicio de la plataforma.
 
-Para cambiar tu contraseña puedes hacerlo desde tu perfil una vez que ingreses.
+          Problemas para iniciar sesión: comunícate con el ing Ignacio Vaca 
+          (Teléfono: 77040459 , correo: jose.vaca@upds.edu.bo)
+          o con el área de sistemas.
 
-Importante: este chatbot no puede consultar notas ni horarios personales
-desde la plataforma; esa información la ves tú con tu propia cuenta.
+          Para cambiar tu contraseña puedes hacerlo desde tu perfil una vez que ingreses.
+
+          Importante: este chatbot no puede consultar notas ni horarios personales
+          desde la plataforma; esa información la ves tú con tu propia cuenta.
         `.trim(),
         categoria: plataforma,
       }),
@@ -229,40 +216,40 @@ desde la plataforma; esa información la ves tú con tu propia cuenta.
     const respuestaDecanatos = await respuestaRepository.save(
       respuestaRepository.create({
         respuesta: `
-Decanatos: responsables y contactos
+          Decanatos: responsables y contactos
 
-Decanato de Ingeniería:
-Responsable: Ing. Carlos Mamani (Decano).
-Teléfono: 4-645-2001.
-Ubicación: Bloque de Ingeniería, primer piso, oficina 101.
-Horario: lunes a viernes de 08:00 a 16:00.
+          Decanato de Ingeniería:
+          Responsable: Ing. Tania Coro (Decana).
+          Celular: 77348103
+          Ubicación: Primer piso, bloques académicos.
+          Horario: lunes a viernes de 08:00 a 16:00.
 
-Decanato de Ciencias Económicas:
-Responsable: Lic. Ana Gutiérrez (Decana).
-Teléfono: 4-645-2002.
-Ubicación: Bloque de Ciencias Económicas, primer piso, oficina 102.
-Horario: lunes a viernes de 08:00 a 16:00.
+          Decanato de Ciencias Empresariales:
+          Responsable: Lic. Zandra Bellido (Decana).
+          Celular : 69672494.
+          Ubicación: Primer piso, bloques académicos.
+          Horario: lunes a viernes de 08:00 a 16:00.
 
-Decanato de Ciencias Sociales:
-Responsable: Dr. Roberto Vargas (Decano).
-Teléfono: 4-645-2003.
-Ubicación: Bloque de Ciencias Sociales, primer piso, oficina 103.
-Horario: lunes a viernes de 08:00 a 16:00.
+          Decanato de Ciencias Jurídicas:
+          Responsable: Lic. Wara Alurralde 
+          Celular: 77040632
+          Ubicación: Primer piso, bloque académicos 
+          Horario: lunes a viernes de 08:00 a 16:00
 
-Decanato de Derecho:
-Responsable: Dra. Lucía Choque (Decana).
-Teléfono: 4-645-2004.
-Ubicación: Bloque de Derecho, segundo piso, oficina 204.
-Horario: lunes a viernes de 08:00 a 16:00.
+          Jefe de modalidad Semipresencial 
+          Responsable: Lic. Jesús Escalante 
+          Celular: 74165912
+          Ubicación: Primer piso: bloque académicos 
+          Horario: Lunes a viernes de 08:00 a 16:00 
 
-Decanato de Ciencias de la Salud:
-Responsable: Dr. Jorge Pinto (Decano).
-Teléfono: 4-645-2005.
-Ubicación: Bloque de Salud, planta baja, oficina 5.
-Horario: lunes a viernes de 08:00 a 16:00.
+          Decanato de Ciencias de la Salud:
+          Responsable: Dr. Ingrid Cuellar (Decano).
+          Teléfono: 4-645-2005.
+          Ubicación: Bloque de Salud, planta baja, oficina 5.
+          Horario: lunes a viernes de 08:00 a 16:00.
 
-Los decanatos brindan orientación académica general y derivan
-al estudiante al área correspondiente.
+          Los decanatos brindan orientación académica general y derivan
+          al estudiante al área correspondiente.
         `.trim(),
         categoria: decanatos,
       }),
@@ -271,18 +258,18 @@ al estudiante al área correspondiente.
     const respuestaAulas = await respuestaRepository.save(
       respuestaRepository.create({
         respuesta: `
-Aulas y Ubicaciones
+          Aulas y Ubicaciones
 
-Bloque A: aulas 101 a 110 (planta baja y primer piso).
-Bloque B: aulas 201 a 210 (segundo piso).
-Bloque C: laboratorios y aulas especializadas.
-Edificio Administrativo: oficinas de dirección, marketing, caja central y atención.
+          Bloque A: aulas 1 a 8 (planta baja y primer piso)., computo 1 y computo 2, decanaturas 
+          Bloque B: aulas 1 a 8 (segundo piso). Computo 3, laboratorio de física, gabinete de fisioterapia 
+          Bloque C: aulas 1 a 8, salón auditorio, baños 
+          Edificio Administrativo: marketing, registros, cajas, sistemas, rectorado
 
-Cada aula tiene su número visible en la puerta; puedes guiarte por los mapas
-ubicados en la entrada de cada bloque.
+          Cada aula tiene su número visible en la puerta; puedes guiarte por los mapas
+          ubicados en la entrada de cada bloque.
 
-Importante: este chatbot NO puede consultar en qué aula tienes clases ni tu
-horario personal; esa información la encuentras en la plataforma universitaria.
+          Importante: este chatbot NO puede consultar en qué aula tienes clases ni tu
+          horario personal; esa información la encuentras en la plataforma universitaria.
         `.trim(),
         categoria: aulas,
       }),
@@ -291,17 +278,20 @@ horario personal; esa información la encuentras en la plataforma universitaria.
     const respuestaModular = await respuestaRepository.save(
       respuestaRepository.create({
         respuesta: `
-Sistema Modular
+          Sistema Modular
+          
+          Consiste en organizar las materias en módulos consecutivos, 
+          cursando una materia por mes, en lugar de llevar 
+          varias materias al mismo tiempo durante todo un semestre 
+          durante ese mes te concentras principalmente en esa asignatura, 
+          realizando sus clases, trabajos, prácticas y evaluaciones, y 
+          cuando termina el módulo pasas a la siguiente materia
+          
+          Para conocer las fechas de inicio, fin y el calendario de un módulo,
+          consulta el calendario académico oficial publicado por la universidad
+          o solicita información en Secretaría General.
 
-El sistema modular organiza las actividades académicas en módulos
-o periodos de estudio. Cada módulo tiene una duración aproximada
-y agrupa varias asignaturas.
-
-Para conocer las fechas de inicio, fin y el calendario de un módulo,
-consulta el calendario académico oficial publicado por la universidad
-o solicita información en Secretaría General.
-
-El chatbot no puede consultar el módulo personal de un estudiante.
+          El chatbot no puede consultar el módulo personal de un estudiante.
         `.trim(),
         categoria: sistemaModular,
       }),
@@ -310,14 +300,12 @@ El chatbot no puede consultar el módulo personal de un estudiante.
     const respuestaAtencion = await respuestaRepository.save(
       respuestaRepository.create({
         respuesta: `
-Atención Universitaria
+          Atención general: lunes a viernes de 08:00 a 19:30.
+          Caja Central: lunes a viernes de 08:00 a 19:30 .
+          Biblioteca: lunes a viernes de 08:00 a 21:00
+          Sistemas (plataforma): lunes a viernes de 08:00 a 19:00.
 
-Atención general: lunes a viernes de 08:00 a 16:00.
-Caja Central: lunes a viernes de 08:00 a 16:00.
-Biblioteca: lunes a viernes de 08:00 a 20:00; sábados de 09:00 a 13:00.
-Mesa de Ayuda (plataforma): lunes a viernes de 08:00 a 18:00.
-
-Para trámites específicos dirígete al área correspondiente dentro de su horario.
+          Para trámites específicos dirígete al área correspondiente dentro de su horario.
         `.trim(),
         categoria: atencion,
       }),
@@ -326,107 +314,60 @@ Para trámites específicos dirígete al área correspondiente dentro de su hora
     const respuestaServicios = await respuestaRepository.save(
       respuestaRepository.create({
         respuesta: `
-Servicios de la Universidad
+          Servicios de la Universidad
 
-Biblioteca Central:
-Ubicación: Bloque C, segundo piso.
-Teléfono: 4-645-1400.
-Horario: lunes a viernes de 08:00 a 20:00; sábados de 09:00 a 13:00.
-Presta libros, salas de estudio y acceso a internet.
-
-Laboratorios de cómputo: Bloque C. Reserva con anticipación en el área de sistemas.
-
-Bienestar Estudiantil (orientación psicológica y social):
-Ubicación: Edificio Administrativo, tercer piso, oficina 301.
-Teléfono: 4-645-1500.
-
-Deportes: canchas y gimnasio universitario. Informes: 4-645-1600.
-
-Cafetería y comedor: edificio de servicios, planta baja.
-
-Transporte universitario: rutas desde la plaza central; consulta horarios en portería.
-
-Correo institucional: se asigna a cada estudiante al momento de la inscripción.
-
-Wi-Fi universitario: red "Universidad" disponible en todos los bloques.
+          Oportunidades de prácticas profesionales mediante convenios
+          Cafetería 3er piso 
+          Biblioteca virtual y Biblioteca Central:Ubicación: Bloque C, segundo piso.
+          Correo institucional: se asigna a cada estudiante al momento de la inscripción.
+          Descuentos en negocios afiliados presentando tu carnet universitario
+          Wi-Fi universitario: red "UniversidadUPDS" disponible en todos los bloques.
         `.trim(),
         categoria: servicios,
-      }),
-    );
-
-    const respuestaEstudiantesNuevos = await respuestaRepository.save(
-      respuestaRepository.create({
-        respuesta: `
-Bienvenido a la Universidad: guía para estudiantes nuevos
-
-Inscripción y matrícula:
-- La inscripción se realiza en las fechas publicadas en el calendario académico.
-- Requisitos: cédula de identidad, certificado de nacimiento, título de bachiller
-  (o certificado en trámite) y fotografías tamaño carnet.
-- El pago de la matrícula se realiza en la Caja Central.
-
-Carnet universitario: se entrega después de la inscripción.
-Consulta en el área de registro académico (Teléfono: 4-645-1700).
-
-Inducción: al inicio de cada periodo se realizan charlas de orientación
-para estudiantes nuevos; revisa el calendario académico.
-
-¿Dónde solicitar información más detallada?
-- Secretaría General: Edificio Administrativo, planta baja.
-- Oficina de Información: Teléfono 4-645-1800, informaciones@universidad.edu.bo.
-        `.trim(),
-        categoria: estudiantesNuevos,
-      }),
-    );
-
-    const respuestaDirectorio = await respuestaRepository.save(
-      respuestaRepository.create({
-        respuesta: `
-Directorio de Contactos
-
-Central telefónica: 4-645-1000.
-Recepción: Edificio Administrativo, planta baja. Teléfono: 4-645-1001.
-Mesa de Ayuda (plataforma): 4-645-1300, mesadeayuda@universidad.edu.bo.
-Secretaría General: 4-645-1700, secretaria@universidad.edu.bo.
-Oficina de Información: 4-645-1800, informaciones@universidad.edu.bo.
-Correo general: info@universidad.edu.bo.
-
-Cada área tiene su teléfono y correo propio. Pregúntame el contacto
-de un área específica (decanatos, cajas, marketing, biblioteca, etc.)
-y te lo indico.
-        `.trim(),
-        categoria: directorio,
       }),
     );
 
     const respuestaInformacionPersonal = await respuestaRepository.save(
       respuestaRepository.create({
         respuesta: `
-Información personal de estudiantes
+          Información personal de estudiantes
 
-Este chatbot NO tiene acceso a datos personales, por lo que no puede decirte
-en qué aula tienes clases, qué materias tienes, tu horario, tus notas
-ni tus calificaciones.
+          Este chatbot NO tiene acceso a datos personales, por lo que no puede decirte
+          en qué aula tienes clases, qué materias tienes, tu horario, tus notas
+          ni tus calificaciones.
 
-Para esa información:
-1. Ingresa a la plataforma universitaria con tu usuario y contraseña.
-2. Si tienes problemas para acceder, comunícate con la Mesa de Ayuda
-   (Teléfono: 4-645-1300) o con el registro académico (Teléfono: 4-645-1700).
+          Para esa información:
+          Ingresa a la plataforma universitaria con tu usuario y contraseña.
+          mediante este link: https://portal.upds.edu.bo/ 
         `.trim(),
         categoria: informacionPersonal,
       }),
     );
 
-    /*
-    |--------------------------------------------------------------------------
-    | PALABRAS CLAVE
-    |--------------------------------------------------------------------------
-    | CAMBIO: se incluyen variantes con y sin tildes, errores comunes y
-    | abreviaturas para que la búsqueda local encuentre los temas. Además,
-    | DeepSeek interpreta el mensaje y elige el tema aunque la palabra
-    | clave no aparezca exacta en la base de datos.
-    */
+    const respuestaCarreras = await respuestaRepository.save(
+      respuestaRepository.create({
+        respuesta: `
+          Facultades y carreras
 
+          Facultad de Ciencias Jurídicas: Derecho.
+          Facultad de Ciencias Empresariales: Administración de Empresas, Contaduría Pública,
+          Ingeniería Comercial y Marketing y Publicidad.
+          Facultad de Ingeniería: Ingeniería de Sistemas, Ingeniería Industrial, Ingeniería en Redes y Telecomunicaciones, 
+          Ingeniería en Gestión Petrolera.
+          Facultad de Ciencias Sociales: Psiclogía.
+          Facultad de Ciencias de la Salud: Medicina, Fisioterapea y kinesiología.
+
+          Carreras Semiprecenciales: Derecho semipresencial, Administración de Empresas semipresencial, 
+          Ingeneria Comercial semipresencial, Ciencias de la Comunicacion Social semipresencial,
+          Psicologia semipresencial.
+        `.trim(),
+        categoria: carreras,
+      }),
+    );
+    
+    /*
+    PALABRAS CLAVE
+    */
     async function crearPalabrasClave(
       palabras: string[],
       respuesta: Respuesta,
@@ -442,9 +383,7 @@ Para esa información:
     }
 
     /*
-    |--------------------------------------------------------------------------
-    | MARKETING
-    |--------------------------------------------------------------------------
+    Marqueting
     */
 
     await crearPalabrasClave(
@@ -470,9 +409,7 @@ Para esa información:
     );
 
     /*
-    |--------------------------------------------------------------------------
-    | PAGOS Y CAJAS
-    |--------------------------------------------------------------------------
+    Cajas y pagos
     */
 
     await crearPalabrasClave(
@@ -522,9 +459,7 @@ Para esa información:
     );
 
     /*
-    |--------------------------------------------------------------------------
-    | PLATAFORMA
-    |--------------------------------------------------------------------------
+    Plata forma Universitaria
     */
 
     await crearPalabrasClave(
@@ -557,9 +492,7 @@ Para esa información:
     );
 
     /*
-    |--------------------------------------------------------------------------
-    | DECANATOS
-    |--------------------------------------------------------------------------
+    Decanos
     */
 
     await crearPalabrasClave(
@@ -612,9 +545,7 @@ Para esa información:
     );
 
     /*
-    |--------------------------------------------------------------------------
-    | AULAS Y UBICACIONES
-    |--------------------------------------------------------------------------
+    Aulas Y bloques
     */
 
     await crearPalabrasClave(
@@ -646,9 +577,7 @@ Para esa información:
     );
 
     /*
-    |--------------------------------------------------------------------------
-    | SISTEMA MODULAR
-    |--------------------------------------------------------------------------
+    Sistema modular
     */
 
     await crearPalabrasClave(
@@ -669,9 +598,7 @@ Para esa información:
     );
 
     /*
-    |--------------------------------------------------------------------------
-    | ATENCIÓN Y HORARIOS
-    |--------------------------------------------------------------------------
+    horarios de atencion
     */
 
     await crearPalabrasClave(
@@ -695,9 +622,7 @@ Para esa información:
     );
 
     /*
-    |--------------------------------------------------------------------------
-    | SERVICIOS DE LA UNIVERSIDAD
-    |--------------------------------------------------------------------------
+    Servicios de la Universidad
     */
 
     await crearPalabrasClave(
@@ -710,18 +635,10 @@ Para esa información:
         'laboratorio de cómputo',
         'laboratorio de computo',
         'bienestar estudiantil',
-        'psicología',
-        'psicologia',
-        'psicólogo',
-        'psicologo',
-        'deportes',
         'canchas',
         'gimnasio',
         'cafetería',
         'cafeteria',
-        'comedor',
-        'transporte',
-        'bus',
         'correo institucional',
         'correo universitario',
         'wifi',
@@ -731,86 +648,9 @@ Para esa información:
       respuestaServicios,
     );
 
-    /*
-    |--------------------------------------------------------------------------
-    | ESTUDIANTES NUEVOS
-    |--------------------------------------------------------------------------
-    */
-
-    await crearPalabrasClave(
-      [
-        'estudiante nuevo',
-        'estudiantes nuevos',
-        'inscripción',
-        'inscripcion',
-        'matrícula',
-        'matricula',
-        'requisitos',
-        'documentos',
-        'carnet universitario',
-        'carnet de estudiante',
-        'inducción',
-        'induccion',
-        'orientación',
-        'orientacion',
-        'bienvenida',
-        'secretaría general',
-        'secretaria general',
-        'oficina de información',
-        'oficina de informacion',
-        'donde solicitar información',
-        'dónde solicitar información',
-        'información más detallada',
-        'informacion mas detallada',
-        'dudas frecuentes',
-        'preguntas frecuentes',
-        'registro académico',
-        'registro academico',
-      ],
-      respuestaEstudiantesNuevos,
-    );
 
     /*
-    |--------------------------------------------------------------------------
-    | DIRECTORIO / CONTACTOS
-    |--------------------------------------------------------------------------
-    */
-
-    await crearPalabrasClave(
-      [
-        'directorio',
-        'contactos',
-        'contacto',
-        'teléfonos',
-        'telefonos',
-        'teléfono',
-        'telefono',
-        'número de teléfono',
-        'numero de telefono',
-        'números',
-        'numeros',
-        'teléfonos de la universidad',
-        'telefonos de la universidad',
-        'contactos de la universidad',
-        'central telefónica',
-        'central telefonica',
-        'recepción',
-        'recepcion',
-        'quien me atiende',
-        'quién me atiende',
-        'a quien llamar',
-        'a quién llamar',
-        'como contactar',
-        'correo de la universidad',
-        'email',
-      ],
-      respuestaDirectorio,
-    );
-
-    /*
-    |--------------------------------------------------------------------------
-    | INFORMACIÓN PERSONAL (límite del chatbot)
-    |--------------------------------------------------------------------------
+    Carreras y facultades
     */
 
     await crearPalabrasClave(
@@ -834,6 +674,53 @@ Para esa información:
       ],
       respuestaInformacionPersonal,
     );
+
+    await crearPalabrasClave(
+      [
+        'carreras',
+        'carrera',
+        'carreras de la upds',
+        'carreras upds',
+        'carreras que ofrece',
+        'carreras disponibles',
+        'qué carreras ofrecen',
+        'que carreras ofrecen',
+        'qué carreras tiene',
+        'que carreras tiene',
+        'qué puedo estudiar',
+        'que puedo estudiar',
+        'oferta académica',
+        'oferta academica',
+        'facultades',
+        'facultad',
+        'ingenierías',
+        'ingenierias',
+        'ingeniería de sistemas',
+        'ingenieria de sistemas',
+        'ingeniería industrial',
+        'ingenieria industrial',
+        'ingeniería comercial',
+        'ingenieria comercial',
+        'derecho',
+        'medicina',
+        'psicología',
+        'psicologia',
+        'contaduría pública',
+        'contaduria publica',
+        'administración de empresas',
+        'administracion de empresas',
+        'marketing y publicidad',
+        'fisioterapia y kinesiología',
+        'fisioterapia y kinesiologia',
+        'redes y telecomunicaciones',
+        'gestión petrolera',
+        'gestion petrolera',
+        'gestión ambiental',
+        'gestion ambiental',
+      ],
+      respuestaCarreras,
+    );
+
 
     console.log('Categorías creadas');
     console.log('Respuestas creadas');

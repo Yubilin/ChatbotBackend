@@ -10,7 +10,7 @@ import { UpdateChatbotDto } from './dto/update-chatbot.dto';
 import { Respuesta } from '../respuesta/entities/respuesta.entity';
 import { PalabraClave } from '../palabra-clave/entities/palabra-clave.entity';
 
-// CAMBIO: tipo de una respuesta de conversación social (saludos, ayuda...)
+// ipo de una respuesta de conversación social (saludos, ayuda...)
 type RespuestaSocial = {
   tipo: string;
   disparadores: string[];
@@ -22,7 +22,7 @@ type Coincidencia = { respuesta: Respuesta; coincidencias: number };
 
 @Injectable()
 export class ChatbotService {
-  private readonly logger = new Logger(ChatbotService.name);
+  private readonly logger = new Logger(ChatbotService.name); 
 
   constructor(
     @InjectRepository(Respuesta)
@@ -31,10 +31,10 @@ export class ChatbotService {
     @InjectRepository(PalabraClave)
     private readonly palabraClaveRepository: Repository<PalabraClave>,
 
-    // CAMBIO: HttpService para llamar a la API de DeepSeek
+    //HttpService para llamar a la API de DeepSeek
     private readonly httpService: HttpService,
 
-    // CAMBIO: ConfigService para leer DEEPSEEK_API_KEY y .env
+    //ConfigService para leer DEEPSEEK_API_KEY y .env
     private readonly configService: ConfigService,
   ) {}
   /**
@@ -59,9 +59,9 @@ export class ChatbotService {
         'como estas',
       ],
       respuesta:
-        'hola Soy el asistente virtual de la universidad. ' +
+        'hola Soy el asistente virtual de la UPDS. ' +
         'Puedo ayudarte con información sobre pagos, plataforma, ' +
-        'marketing, decanatos, aulas, sistema modular y atención. ' +
+        'marketing, decanatos, aulas, sistema modular y carreras. ' +
         '¿En qué puedo ayudarte?',
     },
     {
@@ -79,13 +79,14 @@ export class ChatbotService {
       ],
       respuesta:
         'Claro, puedo ayudarte con estos temas de la universidad:\n' +
-        '• Pagos y cajas\n' +
-        '• Plataforma universitaria (login, contraseña)\n' +
-        '• Marketing y comunicación\n' +
-        '• Decanatos\n' +
-        '• Aulas y bloques\n' +
-        '• Sistema modular\n' +
-        '• Horarios de atención\n\n' +
+        'Pagos y cajas\n' +
+        'Plataforma universitaria (contraseña)\n' +
+        'Marketing y comunicación\n' +
+        'Decanatos\n' +
+        'Aulas y bloques\n' +
+        'Sistema modular\n' +
+        'Horarios de atención\n\n' +
+        'Facultades y carreras\n\n' +
         'Escribeme tu pregunta y te respondere',
     },
     {
@@ -99,7 +100,7 @@ export class ChatbotService {
         'agradecido',
       ],
       respuesta:
-        '¡De nada! 😊 Estoy para ayudarte. ' +
+        '¡De nada! Estoy para ayudarte. ' +
         'Si necesitas algo más, aquí estaré.',
     },
     {
@@ -114,30 +115,16 @@ export class ChatbotService {
         'hasta manana',
       ],
       respuesta:
-        '¡Hasta luego! 👋 Si necesitas algo más, no dudes en escribirme.',
+        '¡Hasta luego!  Si necesitas algo más, no dudes en escribirme.',
     },
   ];
-  /**
-   * Flujo (anti prompt-injection):
-   * 1) Normaliza el mensaje (minúsculas, sin tildes, sin puntuación).
-   * 2) Conversación social rápida (saludos, ayuda, gracias, despedidas)
-   *    SOLO si el mensaje no contiene además un tema del dominio
-   *    ("hola, ¿cómo hago un pago?" debe responder sobre pagos).
-   * 3) DEEPSEEK INTERPRETA el mensaje: errores ortográficos, abreviaturas
-   *    y jerga ("caños" = decanatos, "contra" = contraseña). Devuelve el
-   *    id del tema más parecido y CON ESE ID se consulta la base de datos.
-   *    DeepSeek nunca responde directo: solo elige el tema.
-   * 4) Sin API key (o si DeepSeek no encontró tema): búsqueda local
-   *    estricta y luego tolerante a errores (Levenshtein).
-   * 5) Conversación social como último recurso (mensajes largos).
-   * 6) Si nada coincide, se rechaza la pregunta fuera de alcance.
-   */
+
   async preguntar(mensaje: string) {
     // se normaliza el texto para compararlo mejor con las palabras clave
     const texto = this.normalizar(mensaje);
     this.logger.log(`Pregunta recibida: ${texto}`);
 
-    //  se cargan las palabras clave UNA sola vez y se reutilizan
+    //  se cargan las palabras clave una sola vez y se reutilizan
     const palabrasClave = await this.palabraClaveRepository.find({
       relations: {
         respuesta: {
@@ -146,25 +133,24 @@ export class ChatbotService {
       },
     });
 
-    //  Paso 1 - conversación social (saludos, ayuda, gracias...)
+    // conversación social (saludos, ayuda, gracias)
     // Solo responde social si el mensaje NO trae además un tema del dominio.
     const social = this.detectarConversacionSocial(texto);
     if (social && !this.contieneTemaLocal(texto, palabrasClave)) {
       return { respuesta: social.respuesta, categoria: 'Conversación' };
     }
 
-    // Paso 2 - DEEPSEEK interpreta el mensaje  y devuelve el id del tema mas parecido de la base de datos.
-    // Luego se consultan los datos oficiales con ese id. DeepSeek SOLO
-    // devuelve un id (nunca responde directo) -> protección anti inyección.
+    // DEEPSEEK interpreta el mensaje  y devuelve el id del tema mas parecido de la base de datos.
+    // Luego se consultan los datos oficiales 
     const apiKey = this.configService.get<string>('DEEPSEEK_API_KEY', '');
-    if (apiKey && apiKey !== 'TU_API_KEY_AQUI') {
+    if (apiKey && apiKey !== 'API_KEY_AQUI') {
       const tema = await this.entenderTemaConDeepSeek(mensaje, palabrasClave);
       if (tema) {
         return this.responderConDatosDeLaBase(mensaje, tema);
       }
     }
 
-    // Paso 3 - sin la API key 
+    // sin la API key 
     // busqueda local en la base de datos como respaldo.
     const estricta = this.buscarEnBaseDeDatos(texto, palabrasClave);
     if (estricta) {
@@ -176,28 +162,25 @@ export class ChatbotService {
       return this.responderConDatosDeLaBase(mensaje, tolerante);
     }
 
-    //  Paso 4 - conversación social como ultimo recurso
-    // (mensajes largos que mezclan saludo con otra cosa)
+    //  conversación social como ultimo recurso
     if (social) {
       return { respuesta: social.respuesta, categoria: 'Conversación' };
     }
 
-    // Paso 5 - sin coincidencia la pregunta NO es del dominio del bot
+    // sin coincidencia la pregunta NO es del dominio del bot
     this.logger.warn(`Pregunta fuera de alcance rechazada: ${texto}`);
     return {
       respuesta:
         'Lo siento, no puedo responder esa pregunta. ' +
         'Solo tengo información sobre temas de la universidad ' +
-        '(pagos, plataforma, marketing, etc.).',
+        '(pagos, plataforma, marketing, etc.)\n' +
+        'Escribe "ayuda" para ver los temas que manejo.',
       categoria: null,
     };
   }
 
   /**
    * Normaliza un texto para que las comparaciones sean mas fáciles:
-   * - Pasa todo a minusculas.
-   * - Quita tildes 
-   * - Quita puntuación y espacios repetidos
    */
   private normalizar(texto: string): string {
     return texto
@@ -210,10 +193,6 @@ export class ChatbotService {
   }
 
   /**
-   *  Distancia de Levenshtein: cuantos cambios (insertar, borrar o
-   * sustituir letras) se necesitan para convertir una palabra en otra.
-   *
-   * Ejemplo: "mensualid" -> "mensualidad" = 1 cambio.
    * Se usa para detectar errores ortográficos sin necesidad de IA.
    */
   private distanciaLevenshtein(a: string, b: string): number {
@@ -245,9 +224,7 @@ export class ChatbotService {
 
   /**
    * Dice si el mensaje contiene algun tema del dominio usando la
-   * comparación ESTRICTA local . Se usa para no responder con un
-   * saludo generico cuando el usuario mezcló saludo con una pregunta real:
-   * "hola, ¿cómo hago un pago?" contiene "pago" -> se responde sobre pagos.
+   * comparación ESTRICTA local 
    */
   private contieneTemaLocal(
     texto: string,
@@ -260,17 +237,6 @@ export class ChatbotService {
 
   /**
    *  Dice si una palabra es "parecida" a otra.
-   *
-   * La tolerancia crece con la longitud de la palabra:
-   * - 1 error para palabras cortas (de 1 a 5 letras).
-   * - 2 errores para palabras medianas (6 a 7 letras).
-   * - 3 errores para palabras largas (8 letras o más).
-   *
-   * Ejemplos que SÍ se aceptan:
-   * "mensualid" ~ "mensualidad", "pago" ~ "pagos", "holaa" ~ "hola".
-   *
-   * Ejemplos que NO se aceptan (para evitar falsos positivos):
-   * "quien" ~ "buen" (2 errores en una palabra de 4 letras).
    */
   private palabraEsSimilar(palabra: string, objetivo: string): boolean {
     const longitudMenor = Math.min(palabra.length, objetivo.length);
@@ -280,7 +246,6 @@ export class ChatbotService {
   }
 
   //  BUSQUEDAS EN LA BASE DE DATOS
-
   /**
    * Busca coincidencia ESTRICTA en las palabras clave:
    * la palabra clave debe aparecer tal cual dentro del mensaje.
@@ -295,7 +260,7 @@ export class ChatbotService {
       texto.includes(this.normalizar(palabra.palabras)),
     );
 
-    //  sin coincidencias -> no hay tema del dominio
+    //  sin coincidencias no hay tema del dominio
     if (coincidencias.length === 0) {
       return null;
     }
@@ -304,7 +269,7 @@ export class ChatbotService {
   }
 
   /**
-   * Busca coincidencia tolerante a errores ortográficos.
+   * Busca coincidencia tolerante a errores ortograficos.
    * Compara cada palabra del mensaje con cada palabra clave usando la
    * distancia de Levenshtein. Así "mensualid", "pagoos" o "plataform"
    * siguen encontrando su tema aunque estén mal escritas.
@@ -315,8 +280,7 @@ export class ChatbotService {
   ): Coincidencia | null {
     const palabrasMensaje = texto.split(' ');
 
-    // olo se comparan palabras clave de una sola palabra
-    // (las frases como "caja central" ya las captura la búsqueda estricta)
+    // se comparan palabras clave de una sola palabra ya las captura la búsqueda estricta
     const coincidencias = palabrasClave.filter((palabra) => {
       const keyword = this.normalizar(palabra.palabras);
       if (keyword.includes(' ')) {
@@ -336,7 +300,7 @@ export class ChatbotService {
 
   /**
    *  Agrupa las palabras clave encontradas por respuesta y devuelve
-   * la respuesta que acumuló más coincidencias (la más probable).
+   * la respuesta que acumuló más coincidenciasla más probable.
    */
   private agruparPorRespuesta(coincidencias: PalabraClave[]): Coincidencia | null {
     const porRespuesta = new Map<number, Coincidencia>();
@@ -355,7 +319,7 @@ export class ChatbotService {
       }
     }
 
-    //  se ordena de mayor a menor coincidencias y se toma la primera
+    // se ordena de mayor a menor coincidencias y se toma la primera
     const mejor = [...porRespuesta.values()].sort(
       (a, b) => b.coincidencias - a.coincidencias,
     )[0];
@@ -365,12 +329,9 @@ export class ChatbotService {
 
 
   // CONVERSACION SOCIAL
-  
   /**
-   *  Detecta si el mensaje es un saludo, una petición de ayuda,
-   * un agradecimiento o una despedida. También tolera errores ortográficos
-   * ("holaa", "grasias", "chau").
-   *
+   * Detecta si el mensaje es un saludo, una petición de ayuda,
+   * También tolera errores ortográficos
    * Devuelve la respuesta social preparada o null si no es conversación social.
    */
   private detectarConversacionSocial(texto: string): RespuestaSocial | null {
@@ -381,20 +342,17 @@ export class ChatbotService {
         const d = this.normalizar(disparador);
         const esFrase = d.includes(' ');
 
-        // 1) coincidencia exacta de la frase completa dentro del texto
+        //coincidencia exacta de la frase completa dentro del texto
         if (texto.includes(d)) {
           return true;
         }
 
-        //  la tolerancia ortográfica solo se usa con disparadores
-        // de UNA palabra. Con frases como "como estas" o "que tal",
-        // comparar palabra por palabra genera falsos positivos: cualquier
-        // pregunta que empiece con "como" parecería un saludo.
+        // comparar palabra por palabra genera falsos positivos
         if (esFrase) {
           return false;
         }
 
-        // 2) tolerancia a errores ortográficos palabra por palabra
+        // Errores ortográficos palabra por palabra
         return palabrasMensaje.some((palabraMensaje) =>
           this.palabraEsSimilar(palabraMensaje, d),
         );
@@ -408,26 +366,19 @@ export class ChatbotService {
     return null;
   }
 
-  // COMPRENSIÓN DE MENSAJES CON DEEPSEEK
-  //
+  // COMPRENSION DE MENSAJES CON DEEPSEEK
 
   /**
-   *  DeepSeek "entiende" el mensaje del estudiante (aunque tenga
-   * errores ortográficos o esté redactado de forma muy distinta) y elige
-   * cuál de los temas de la base de datos es el más parecido.
-   *
-   * Seguridad:
-   * - DeepSeek SOLO devuelve el id de un tema en formato JSON.
-   * - Nunca responde directamente al estudiante en este paso.
-   * - El id se valida contra la lista real de la base de datos.
-   * - Si DeepSeek falla o no encuentra tema, se devuelve null.
-   */
+ * DeepSeek entiende el mensaje del estudiante
+ * aunque tenga errores ortográficos o lo escriba de otra manera.
+ * y elige cuál de los temas de la base de datos es el más parecido.
+ */
   private async entenderTemaConDeepSeek(
     mensaje: string,
     palabrasClave: PalabraClave[],
   ): Promise<Coincidencia | null> {
     const apiKey = this.configService.get<string>('DEEPSEEK_API_KEY', '');
-    if (!apiKey || apiKey === 'TU_API_KEY_AQUI') {
+    if (!apiKey || apiKey === 'API_KEY_AQUI') {
       return null;
     }
 
@@ -489,7 +440,7 @@ export class ChatbotService {
       const contenido = data?.choices?.[0]?.message?.content ?? '';
       const id = this.extraerIdDelJson(contenido);
 
-      //  sin id valido -> DeepSeek no encontró ningún tema
+      //  sin id valido DeepSeek no encontró ningún tema
       if (id === null) {
         return null;
       }
@@ -531,20 +482,10 @@ export class ChatbotService {
     }
   }
 
-  // ==========================================
-  // RESPUESTA CON DATOS DE LA BASE DE DATOS
-  // ==========================================
-
-  /**
-   * DeepSeek redacta la respuesta usando SOLO los datos de la
-   * base de datos (que se pasan como "CONTEXTO" en el system prompt).
-   *
-   * Seguridad:
-   * - El system prompt obliga a responder únicamente con el CONTEXTO
-   *   y a ignorar instrucciones que vengan dentro del mensaje del usuario.
-   * - Si la API key no está configurada o la llamada falla, se devuelve
-   *   el texto de la BD tal cual (el bot nunca se queda sin responder).
-   */
+  /*
+  Respuesta de DeepSeek con datos de la DB 
+  Sin API key devuelve directamente los datos de la BD.   
+  */
   private async responderConDatosDeLaBase(
     mensaje: string,
     coincidencia: Coincidencia,
@@ -560,11 +501,10 @@ export class ChatbotService {
       'https://api.deepseek.com/chat/completions',
     );
 
-    //  si la key no está configurada (o es el placeholder),
-    // se responde directamente con los datos de la BD.
-    if (!apiKey || apiKey === 'TU_API_KEY_AQUI') {
+    //  si la key no está configurada se responde directamente con los datos de la BD.
+    if (!apiKey || apiKey === 'API_KEY_AQUI') {
       this.logger.warn(
-        'DEEPSEEK_API_KEY no configurada en .env. ' +
+        'DEEPSEEK_API_KEY no esta configurada en .env. ' +
           'Se responde con los datos de la base de datos.',
       );
       return { respuesta: datosOficiales, categoria };
@@ -609,8 +549,7 @@ export class ChatbotService {
         throw new Error('DeepSeek no devolvió contenido');
       }
 
-      //  se devuelve la respuesta redactada por la IA pero
-      // siempre basada en los datos de la BD.
+      //  se devuelve la respuesta redactada por la IA con los datos de la BD
       return { respuesta: contenido.trim(), categoria };
     } catch (error) {
       // si DeepSeek falla, se responde con los datos de la BD

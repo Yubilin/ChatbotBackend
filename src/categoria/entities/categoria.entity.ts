@@ -6,7 +6,6 @@ export class Categoria {
     id: number;
     @Column()
     nombre: string;
-    // CAMBIO: la descripción puede ser larga; se usa TEXT por seguridad
     @Column({ type: 'text' })
     descripcion: string;
     @OneToMany(() => Respuesta, respuesta => respuesta.categoria)
