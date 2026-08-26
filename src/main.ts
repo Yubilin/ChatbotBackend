@@ -5,14 +5,13 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   // se crea la app como NestExpressApplication para poder
-  // servir archivos estáticos (la interfaz gráfica del chat).
+  // servir archivos estáticos la interfaz gráfica del chatbot
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // CAMBIO: habilita CORS para que el frontend pueda consumir el chatbot
+  // habilita CORS para que el frontend pueda consumir el chatbot
   app.enableCors();
 
   // sirve la carpeta public/ en la raíz del servidor.
-  // Con esto, al abrir http://localhost:3000 en el navegador
   app.useStaticAssets(join(__dirname, '..', 'public'));
 
   await app.listen(process.env.PORT ?? 3000);

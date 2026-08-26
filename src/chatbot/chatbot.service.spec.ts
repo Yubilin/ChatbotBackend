@@ -60,7 +60,7 @@ describe('ChatbotService', () => {
 
     // Sin API key configurada (placeholder) -> responde con la BD directamente
     const configService = module.get(ConfigService);
-    configService.get.mockReturnValue('TU_API_KEY_AQUI');
+    configService.get.mockReturnValue('API_KEY');
 
     const resultado = await service.preguntar('¿Cómo hago un pago?');
 
@@ -92,14 +92,14 @@ describe('ChatbotService', () => {
     );
 
     const httpService = module.get(HttpService);
-    // 1ª llamada: DeepSeek interpreta el mensaje y elige el tema (id 1)
+    // 1 llamada DeepSeek interpreta el mensaje y elige el tema (id 1)
     httpService.post
       .mockReturnValueOnce(
         of({
           data: { choices: [{ message: { content: '{"id": 1}' } }] },
         }),
       )
-      // 2ª llamada: DeepSeek redacta la respuesta con los datos de la BD
+      // 2 llamada: DeepSeek redacta la respuesta con los datos de la BD
       .mockReturnValueOnce(
         of({
           data: {
@@ -134,9 +134,7 @@ describe('ChatbotService', () => {
     expect(resultado.categoria).toBeNull();
   });
 
-  // ==========================================
-  // CAMBIO: conversación social (saludos, ayuda, gracias, despedidas)
-  // ==========================================
+  //  conversación social (saludos, ayuda, gracias, despedidas)
 
   it('responde a un saludo sin llamar a DeepSeek', async () => {
     const palabraClaveRepo = module.get(getRepositoryToken(PalabraClave));
@@ -213,9 +211,7 @@ describe('ChatbotService', () => {
     expect(resultado.categoria).toBe('Pagos');
   });
 
-  // ==========================================
-  // CAMBIO: tolerancia a errores ortográficos sin IA
-  // ==========================================
+  //  tolerancia a errores ortográficos sin IA
 
   it('entiende una palabra clave con error ortográfico sin usar IA ("mensualid")', async () => {
     const palabraClaveRepo = module.get(getRepositoryToken(PalabraClave));
@@ -246,9 +242,7 @@ describe('ChatbotService', () => {
     expect(httpService.post).not.toHaveBeenCalled();
   });
 
-  // ==========================================
   // CAMBIO: DeepSeek entiende el mensaje y elige el tema
-  // ==========================================
 
   it('usa DeepSeek para entender un mensaje mal escrito y elegir el tema correcto', async () => {
     const palabraClaveRepo = module.get(getRepositoryToken(PalabraClave));
@@ -279,7 +273,7 @@ describe('ChatbotService', () => {
           data: { choices: [{ message: { content: '{"id": 1}' } }] },
         }),
       )
-      // 2ª llamada: DeepSeek redacta la respuesta con los datos de la BD
+      // 2 llamada: DeepSeek redacta la respuesta con los datos de la BD
       .mockReturnValueOnce(
         of({
           data: {
@@ -332,10 +326,6 @@ describe('ChatbotService', () => {
     expect(resultado.categoria).toBeNull();
   });
 
-  // ==========================================
-  // CAMBIO: DeepSeek interpreta abreviaturas y jerga antes de consultar la BD
-  // ==========================================
-
   it('interpreta "contactos de caños" como decanatos con DeepSeek y consulta la BD', async () => {
     const palabraClaveRepo = module.get(getRepositoryToken(PalabraClave));
     palabraClaveRepo.find.mockResolvedValue([
@@ -365,7 +355,7 @@ describe('ChatbotService', () => {
           data: { choices: [{ message: { content: '{"id": 1}' } }] },
         }),
       )
-      // 2ª llamada: DeepSeek redacta la respuesta con los datos de la BD
+      // 2 llamada DeepSeek redacta la respuesta con los datos de la BD
       .mockReturnValueOnce(
         of({
           data: {
@@ -412,7 +402,7 @@ describe('ChatbotService', () => {
           data: { choices: [{ message: { content: '{"id": 1}' } }] },
         }),
       )
-      // 2ª llamada: DeepSeek redacta la respuesta con los datos de la BD
+      // 2 llamada: DeepSeek redacta la respuesta con los datos de la BD
       .mockReturnValueOnce(
         of({
           data: {

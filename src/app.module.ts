@@ -18,7 +18,7 @@ import { HttpModule } from '@nestjs/axios';
       envFilePath: '.env',
     }),
 
-    // typeORM lee las credenciales de .env y no hay usa valores por defecto
+    // typeORM lee las credenciales de .env y no usa valores por defecto
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({

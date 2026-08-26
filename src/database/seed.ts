@@ -16,7 +16,7 @@ const dataSource = new DataSource({
   host: process.env.DB_HOST ?? 'localhost',
   port: parseInt(process.env.DB_PORT ?? '3306', 10),
   username: process.env.DB_USER ?? 'ciel',
-  password: process.env.DB_PASSWORD ?? 'zafkiel12',
+  password: process.env.DB_PASSWORD ?? 'xiel13!',
   database: process.env.DB_NAME ?? 'chatbot',
 
   entities: [Categoria, Respuesta, PalabraClave, Chatbot, Consulta],
@@ -32,16 +32,10 @@ async function seed() {
 
     const categoriaRepository = dataSource.getRepository(Categoria);
     const respuestaRepository = dataSource.getRepository(Respuesta);
-    const palabraClaveRepository = dataSource.getRepository(PalabraClave);    /*
-    |--------------------------------------------------------------------------
-    | LIMPIAR DATOS ANTERIORES
-    |--------------------------------------------------------------------------
-    | CAMBIO: MySQL no permite TRUNCATE en una tabla referenciada por una
-    | clave foránea (palabras_clave.respuestaId -> respuestas.id). Por eso
-    | se desactivan temporalmente las verificaciones de claves foráneas
-    | mientras se limpian las tablas.
-    */
+    const palabraClaveRepository = dataSource.getRepository(PalabraClave);    
 
+    //LIMPIAR DATOS ANTERIORES
+  
     await dataSource.query('SET FOREIGN_KEY_CHECKS = 0');
 
     await palabraClaveRepository.clear();
@@ -52,12 +46,7 @@ async function seed() {
 
     console.log('Datos anteriores eliminados');
 
-    /*
-    CATEGORIAS
-
-    contactos, decanatos, pagos, plataforma, aulas, sistema modular, atencion, servicios, estudiantes nuevos y datos personales.
-    */
-
+    //CATEGORIAS
     const marketing = await categoriaRepository.save(
       categoriaRepository.create({
         nombre: 'Marketing',
@@ -116,7 +105,7 @@ async function seed() {
 
     const informacionPersonal = await categoriaRepository.save(
       categoriaRepository.create({
-        nombre: 'Información Personal',
+        nombre: 'Información Personal Aula',
         descripcion: 'Aclara que el chatbot no accede a datos personales',
       }),
     );
@@ -127,10 +116,22 @@ async function seed() {
         descripcion: 'Información sobre las carreras profesionales',
       }),
     );
-    /*
-      RESPUESTAS
-    */
 
+    const ubicacionUPDS = await categoriaRepository.save(
+      categoriaRepository.create({
+        nombre: 'ubicacion de la Univercidad',
+        descripcion: 'Informacion de la ubicacion de la universidad',
+      }),
+    );
+
+    const becas = await categoriaRepository.save(
+      categoriaRepository.create({
+        nombre: 'Becas que se ofrecen ',
+        descripcion: 'Informacion de Becas de la universidad',
+      }),
+    );
+
+    // RESPUESTAS
     const respuestaMarketing = await respuestaRepository.save(
       respuestaRepository.create({
         respuesta: `
@@ -268,7 +269,7 @@ async function seed() {
           Cada aula tiene su número visible en la puerta; puedes guiarte por los mapas
           ubicados en la entrada de cada bloque.
 
-          Importante: este chatbot NO puede consultar en qué aula tienes clases ni tu
+          Importante: este chatbot no puede consultar en qué aula tienes clases ni tu
           horario personal; esa información la encuentras en la plataforma universitaria.
         `.trim(),
         categoria: aulas,
@@ -322,6 +323,11 @@ async function seed() {
           Correo institucional: se asigna a cada estudiante al momento de la inscripción.
           Descuentos en negocios afiliados presentando tu carnet universitario
           Wi-Fi universitario: red "UniversidadUPDS" disponible en todos los bloques.
+          Sedes: La Universidad al tener presencia en los nueve departamentos de Bolivia
+          permite la ventaja de cambiarte de ciudad sin perder materias ni retrasar tu carrera,
+          ya que todas las sedes usan el mismo plan de estudios y sistema modular. Además, esta
+          enorme red nacional multiplica tus opciones de prácticas profesionales por sus convenios
+          en todo el país.
         `.trim(),
         categoria: servicios,
       }),
@@ -339,6 +345,15 @@ async function seed() {
           Para esa información:
           Ingresa a la plataforma universitaria con tu usuario y contraseña.
           mediante este link: https://portal.upds.edu.bo/ 
+          paso que deves de seguir para ver tus notas:
+          1 Al ingresar al link ingresa al area asignada (UPDS NET)
+          2 Has clik sobre las tres rayas que esta en la esquina superior a la derecha y dirigete a (Historico Registro)
+          3 Ingresa a la materia pendiente que tienes (Ir a Curso)
+          4 En la parte de Arriba dirigete a Calificaciones y podras ver tus notas 
+          SEGUNDO METODO MATERIAS:
+          1 Has clik sobre las tres rayas que esta en la esquina superior a tu derecha y dirigete a (Seguimiento & Registro)
+          2 En este apartado veras las materias que pasaste y los que te falta  cada materia aprovada esta con una marca verde 
+          en la esquina superios indica el nombre de la materia y la nota optenida.
         `.trim(),
         categoria: informacionPersonal,
       }),
@@ -365,9 +380,39 @@ async function seed() {
       }),
     );
     
-    /*
-    PALABRAS CLAVE
-    */
+    const respuestaubicacionUPDS = await respuestaRepository.save(
+      respuestaRepository.create({
+        respuesta: `
+          Información de la Universidad 
+
+          La Universidad Privada Domingo Sabio sede Sucre se encuedra 
+          ubicada en Cacique Titu # 175, Zona Villa Charcas 
+
+        `.trim(),
+        categoria: ubicacionUPDS,
+      }),
+    );
+
+    const respuestaBecasUPDS = await respuestaRepository.save(
+      respuestaRepository.create({
+        respuesta: `
+          Información de becas UPDS 
+
+          Una beca es una ayuda que brinda la UPDS a los estudiantes 
+          para reducir o cubrir parte de los costos de sus estudios.
+          La universidad ofrece diferentes tipos de becas por excelencia académica
+          Cada beca tiene requisitos y porcentajes de cobertura diferentes.
+
+          La Universidad Privada Domingo Sabio sucre ofrece beca estudio
+          del 50% y 100% en relación a tu rendimiento académico y notas
+          para mas informacion comunicate con Marketing
+
+        `.trim(),
+        categoria: becas,
+      }),
+    );
+
+    //PALABRAS CLAVE
     async function crearPalabrasClave(
       palabras: string[],
       respuesta: Respuesta,
@@ -382,10 +427,7 @@ async function seed() {
       }
     }
 
-    /*
-    Marqueting
-    */
-
+    // Marqueting
     await crearPalabrasClave(
       [
         'marketing',
@@ -408,10 +450,7 @@ async function seed() {
       respuestaMarketing,
     );
 
-    /*
-    Cajas y pagos
-    */
-
+    // Cajas y pagos
     await crearPalabrasClave(
       [
         'pago',
@@ -458,10 +497,7 @@ async function seed() {
       respuestaPagos,
     );
 
-    /*
-    Plata forma Universitaria
-    */
-
+    // Plata forma Universitaria
     await crearPalabrasClave(
       [
         'plataforma',
@@ -491,10 +527,7 @@ async function seed() {
       respuestaPlataforma,
     );
 
-    /*
-    Decanos
-    */
-
+    // Decanos
     await crearPalabrasClave(
       [
         'decanato',
@@ -544,10 +577,7 @@ async function seed() {
       respuestaDecanatos,
     );
 
-    /*
-    Aulas Y bloques
-    */
-
+    // Aulas Y bloques
     await crearPalabrasClave(
       [
         'aula',
@@ -576,10 +606,7 @@ async function seed() {
       respuestaAulas,
     );
 
-    /*
-    Sistema modular
-    */
-
+    // Sistema modular
     await crearPalabrasClave(
       [
         'modular',
@@ -597,10 +624,7 @@ async function seed() {
       respuestaModular,
     );
 
-    /*
-    horarios de atencion
-    */
-
+    // horarios de atencion
     await crearPalabrasClave(
       [
         'atención',
@@ -621,10 +645,7 @@ async function seed() {
       respuestaAtencion,
     );
 
-    /*
-    Servicios de la Universidad
-    */
-
+    // Servicios de la Universidad
     await crearPalabrasClave(
       [
         'servicios',
@@ -648,11 +669,7 @@ async function seed() {
       respuestaServicios,
     );
 
-
-    /*
-    Carreras y facultades
-    */
-
+    // Carreras y facultades
     await crearPalabrasClave(
       [
         'mi aula',
@@ -675,6 +692,7 @@ async function seed() {
       respuestaInformacionPersonal,
     );
 
+    // carreras
     await crearPalabrasClave(
       [
         'carreras',
@@ -720,7 +738,122 @@ async function seed() {
       ],
       respuestaCarreras,
     );
+    
+    await crearPalabrasClave(
+      [
+        'ubicación',
+        'ubicacion',
+        'dónde queda',
+        'donde queda',
+        'dónde están',
+        'donde estan',
+        'dirección',
+        'direccion',
+        'direcciones',
+        'dónde se encuentra',
+        'donde se encuentra',
+        'sedes',
+        'sede',
+        'campus',
+        'sucursal',
+        'sucursales',
+        'mapa',
+        'cómo llegar',
+        'como llegar',
+        'localización',
+        'localizacion',
+        'en qué lugar está',
+        'en que lugar esta',
+        'dirección de la upds',
+        'direccion de la upds',
+        'ubicación upds',
+        'ubicacion upds',
+        'dónde queda la upds',
+        'donde queda la upds',
+        'dónde está la upds',
+        'donde esta la upds',
+        'sedes upds',
+        'sede upds',
+        'dirección exacta',
+        'direccion exacta',
+        'en qué departamentos está',
+        'en que departamentos esta',
+        'dónde estudiar upds',
+        'donde estudiar upds',
+      ],
+      respuestaubicacionUPDS,
+    );
 
+    await crearPalabrasClave(
+    [
+      'beca',
+      'becas',
+      'beca upds',
+      'becas upds',
+      'beca universitaria',
+      'becas universitarias',
+      'beca de estudio',
+      'becas de estudio',
+      'ayuda económica',
+      'ayuda economica',
+      'apoyo económico',
+      'apoyo economico',
+      'beneficio estudiantil',
+      'beneficios estudiantiles',
+      'descuento en la universidad',
+      'descuentos universidad',
+      'cómo obtener una beca',
+      'como obtener una beca',
+      'cómo conseguir una beca',
+      'como conseguir una beca',
+      'cómo solicitar una beca',
+      'como solicitar una beca',
+      'cómo postular a una beca',
+      'como postular a una beca',
+      'requisitos para una beca',
+      'requisitos beca',
+      'requisitos de becas',
+      'postulación a becas',
+      'postulacion a becas',
+      'solicitud de beca',
+      'solicitud de becas',
+      'qué becas ofrece la upds',
+      'que becas ofrece la upds',
+      'becas que ofrece la upds',
+      'tipos de becas',
+      'tipo de becas',
+      'beca social',
+      'beca social solidaria',
+      'beca por excelencia',
+      'beca excelencia académica',
+      'beca excelencia academica',
+      'beca deportiva',
+      'beca cultural',
+      'beca por convenio',
+      'beca convenios institucionales',
+      'beca comunidad universitaria',
+      'beca trabajo',
+      'beca UPDSol',
+      'beca para bachilleres',
+      'beca para estudiantes',
+      'beca para nuevos estudiantes',
+      'cuánto cubre la beca',
+      'cuanto cubre la beca',
+      'porcentaje de beca',
+      'porcentaje de las becas',
+      'cuánto es la beca',
+      'cuanto es la beca',
+      'beca del 100%',
+      'beca completa',
+      'media beca',
+      'beca parcial',
+      'beca total',
+      'fecha para postular a becas',
+      'convocatoria de becas',
+      'convocatorias de becas',
+    ],
+    respuestaBecasUPDS,
+  );
 
     console.log('Categorías creadas');
     console.log('Respuestas creadas');

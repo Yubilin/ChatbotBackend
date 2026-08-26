@@ -80,7 +80,3 @@ npm run test       # ejecutar pruebas
 - **La base de datos no existe:** ejecuta `CREATE DATABASE chatbot;`.
 - **El puerto 3000 está ocupado:** cambia `PORT` en `.env` y abre el nuevo puerto en el navegador.
 - **No responde con IA:** revisa `DEEPSEEK_API_KEY`; sin esa clave seguirá funcionando el modo local.
-
-## Importante
-
-No subas `.env` al repositorio. Usa claves y contraseñas propias en cada dispositivo. Si una API key ya fue compartida públicamente, revócala y genera una nueva.
