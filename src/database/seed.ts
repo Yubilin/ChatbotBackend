@@ -152,12 +152,16 @@ async function seed() {
     const respuestaPagos = await respuestaRepository.save(
       respuestaRepository.create({
         respuesta: `
-          Pagos y Cajas
+          Pagos, Cajas y Ing. Marcelo Taboada Mendoza
 
           Caja Central:
           Ubicación: Planta baja del Edificio Administrativo.
           Celular: 69672492
           Horario: lunes a viernes de 08:00 a 12:30 y 15:00 a 19:30 .
+
+          Secretaría General: Ing. Marcelo Taboada Mendoza
+          Celular: 76111383
+          Correo electronico: marcelo.taboada@upds.edu.bo
 
           Medios de pago: efectivo, tarjeta de débito, depósito o transferencia bancaria.
           Se entrega comprobante de cada pago: conserva siempre tu recibo.
@@ -196,6 +200,15 @@ async function seed() {
           se entregan mediante la plataforma universitaria virtual, dentro de la materia correspondiente. 
           El docente publica la actividad, indica las instrucciones y la fecha límite,
           y el estudiante debe subir allí el archivo o trabajo solicitado.
+
+          PASOS que deves de seguir para entregar las tareas y trabajos:
+          1 Al ingresar al link ingresa al area asignada (UPDS NET)
+          2 Has clik sobre las tres lineas que esta en la esquina superior a tu derecha y dirigete a (Historico Registro)
+          3 Ingresa a la materia pendiente que tienes (Ir a Curso)
+          4 Al estar en la materia correspondiente dirigete hacia la parte inferior
+          5 Podras opservar los trabajos que estan pendientes o como tambien los entregados 
+
+          link:  https://portal.upds.edu.bo/ 
 
           Ingreso: utiliza tu usuario y contraseña proporcionados por la universidad.
           ¿Olvidaste tu contraseña? Usa la opción "¿Olvidaste tu contraseña?" en la
@@ -244,7 +257,7 @@ async function seed() {
           Horario: Lunes a viernes de 08:00 a 16:00 
 
           Decanato de Ciencias de la Salud:
-          Responsable: Dr. Ingrid Cuellar (Decano).
+          Responsable: Dra. Ingrid Cuellar Callejas (Decana).
           Teléfono: 4-645-2005.
           Ubicación: Bloque de Salud, planta baja, oficina 5.
           Horario: lunes a viernes de 08:00 a 16:00.
@@ -292,7 +305,7 @@ async function seed() {
           consulta el calendario académico oficial publicado por la universidad
           o solicita información en Secretaría General.
 
-          El chatbot no puede consultar el módulo personal de un estudiante.
+          El chatbot no puede consultar el módulo personal de un estudiante
         `.trim(),
         categoria: sistemaModular,
       }),
@@ -301,9 +314,13 @@ async function seed() {
     const respuestaAtencion = await respuestaRepository.save(
       respuestaRepository.create({
         respuesta: `
-          Atención general: lunes a viernes de 08:00 a 19:30.
-          Caja Central: lunes a viernes de 08:00 a 19:30 .
+          Atención general: lunes a viernes de 08:00 a 19:30 
+
+          Caja Central: lunes a viernes de 08:00 a 19:30
+
           Biblioteca: lunes a viernes de 08:00 a 21:00
+          Ubicacion: En el Bloque C con direcion a la cafeteria de la Universidad 
+
           Sistemas (plataforma): lunes a viernes de 08:00 a 19:00.
 
           Para trámites específicos dirígete al área correspondiente dentro de su horario.
@@ -319,7 +336,7 @@ async function seed() {
 
           Oportunidades de prácticas profesionales mediante convenios
           Cafetería 3er piso 
-          Biblioteca virtual y Biblioteca Central:Ubicación: Bloque C, segundo piso.
+          Biblioteca virtual y Biblioteca Central
           Correo institucional: se asigna a cada estudiante al momento de la inscripción.
           Descuentos en negocios afiliados presentando tu carnet universitario
           Wi-Fi universitario: red "UniversidadUPDS" disponible en todos los bloques.
@@ -347,7 +364,7 @@ async function seed() {
           mediante este link: https://portal.upds.edu.bo/ 
           paso que deves de seguir para ver tus notas:
           1 Al ingresar al link ingresa al area asignada (UPDS NET)
-          2 Has clik sobre las tres rayas que esta en la esquina superior a la derecha y dirigete a (Historico Registro)
+          2 Has clik sobre las tres rayitas que esta en la esquina superior a la derecha y dirigete a (Historico Registro)
           3 Ingresa a la materia pendiente que tienes (Ir a Curso)
           4 En la parte de Arriba dirigete a Calificaciones y podras ver tus notas 
           SEGUNDO METODO MATERIAS:
@@ -375,6 +392,41 @@ async function seed() {
           Carreras Semiprecenciales: Derecho semipresencial, Administración de Empresas semipresencial, 
           Ingeneria Comercial semipresencial, Ciencias de la Comunicacion Social semipresencial,
           Psicologia semipresencial.
+          
+          Información de las carreras
+
+          para tener una informacion sobre tu carrera  consulta al decano asignado de tu facultad 
+          para mas informacion dirígete Área de Marketing 
+
+          Responsable: Lic. Andrés Cueto  (Asesor Comercial).
+          Ubicación: Edificio Administrativo, planta baja 
+          Celular: 74163220
+          Horario de atención: lunes a viernes de 08:00 a 12:30 y de 15:00 a 19:30 Sábado: 8:30 a 12:30 
+
+          Carreras de Ingeniería
+          Responsable: Ing. Tania Coro.
+          Celular: 77348103.
+          Ubicación: Primer piso, bloques académicos.
+
+          Carreras de Ciencias Empresariales:
+          Responsable: Lic. Zandra Bellido.
+          Celular: 69672494.
+          Ubicación: Primer piso, bloques académicos.
+
+          Carreras de Ciencias Jurídicas:
+          Responsable: Lic. Wara Alurralde.
+          Celular: 77040632.
+          Ubicación: Primer piso, bloques académicos.
+
+          Carreras en Modalidad Semipresencial:
+          Responsable: Lic. Jesús Escalante.
+          Celular: 74165912.
+          Ubicación: Primer piso, bloques académicos.
+
+          Carreras de Ciencias de la Salud:
+          Responsable: Dr. Ingrid Cuellar.
+          Ubicación: Bloque de Salud, planta baja, oficina 5
+
         `.trim(),
         categoria: carreras,
       }),
@@ -411,6 +463,7 @@ async function seed() {
         categoria: becas,
       }),
     );
+
 
     //PALABRAS CLAVE
     async function crearPalabrasClave(
@@ -735,6 +788,52 @@ async function seed() {
         'gestion petrolera',
         'gestión ambiental',
         'gestion ambiental',
+        'información de mi carrera',
+        'informacion de mi carrera',
+        'información sobre mi carrera',
+        'informacion sobre mi carrera',
+        'información carrera',
+        'informacion carrera',
+        'información de la carrera',
+        'informacion de la carrera',
+        'información sobre la carrera',
+        'informacion sobre la carrera',
+        'mi carrera',
+        'mi carrera universitaria',
+        'mi carrera profesional',
+        'carrera que estudio',
+        'carrera que estoy estudiando',
+        'sobre mi carrera',
+        'sobre la carrera',
+        'quiero información de mi carrera',
+        'quiero informacion de mi carrera',
+        'quiero saber sobre mi carrera',
+        'quiero saber de mi carrera',
+        'necesito información de mi carrera',
+        'necesito informacion de mi carrera',
+        'dame información de mi carrera',
+        'dame informacion de mi carrera',
+        'más información de mi carrera',
+        'mas informacion de mi carrera',
+        'datos de mi carrera',
+        'información académica de mi carrera',
+        'informacion academica de mi carrera',
+        'información de mi carrera universitaria',
+        'informacion de mi carrera universitaria',
+        'plan de estudios de mi carrera',
+        'materias de mi carrera',
+        'materias de la carrera',
+        'asignaturas de mi carrera',
+        'duración de mi carrera',
+        'duracion de mi carrera',
+        'perfil de mi carrera',
+        'campo laboral de mi carrera',
+        'salida laboral de mi carrera',
+        'requisitos de mi carrera',
+        'horarios de mi carrera',
+        'modalidad de mi carrera',
+        'dónde se estudia mi carrera',
+        'donde se estudia mi carrera',
       ],
       respuestaCarreras,
     );
