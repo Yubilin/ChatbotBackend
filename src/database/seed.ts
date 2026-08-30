@@ -8,9 +8,7 @@ import { PalabraClave } from '../palabra-clave/entities/palabra-clave.entity';
 import { Chatbot } from '../chatbot/entities/chatbot.entity';
 import { Consulta } from '../consulta/entities/consulta.entity';
 
-/*
-| Conexcion DB
-*/
+// Conexcion DB
 const dataSource = new DataSource({
   type: 'mysql',
   host: process.env.DB_HOST ?? 'localhost',
@@ -119,14 +117,14 @@ async function seed() {
 
     const ubicacionUPDS = await categoriaRepository.save(
       categoriaRepository.create({
-        nombre: 'ubicacion de la Univercidad',
+        nombre: 'Ubicación de la Universidad',
         descripcion: 'Informacion de la ubicacion de la universidad',
       }),
     );
 
     const becas = await categoriaRepository.save(
       categoriaRepository.create({
-        nombre: 'Becas que se ofrecen ',
+        nombre: 'Becas',
         descripcion: 'Informacion de Becas de la universidad',
       }),
     );
@@ -177,7 +175,7 @@ async function seed() {
           2. Indica el concepto de pago (matrícula, cuota, arancel).
           3. Realiza el pago y conserva el comprobante.
 
-          Si tienes deudas o mora, acude a la Caja para regularizar tu situación
+          Si tienes deudas o demoras, acude a la Caja para regularizar tu situación
           y evitar recargos.
         `.trim(),
         categoria: pagos,
@@ -529,7 +527,6 @@ async function seed() {
         'teléfono caja',
         'número caja',
         'numero caja',
-        'horario caja',
         'donde pago',
         'dónde pago',
         'como pago',
@@ -546,6 +543,16 @@ async function seed() {
         'efectivo',
         'débito',
         'debito',
+        'donde esta caja central',
+        'dónde está caja central',
+        'ubicacion caja central',
+        'ubicación caja central',
+        'horario caja central',
+        'telefono caja central',
+        'teléfono caja central',
+        'numero caja central',
+        'número caja central',
+        'contacto caja central',
       ],
       respuestaPagos,
     );
@@ -595,17 +602,16 @@ async function seed() {
         'decano de ingenieria',
         'ingeniería',
         'ingenieria',
-        'decanato de ciencias económicas',
-        'decanato de ciencias economicas',
-        'ciencias económicas',
-        'ciencias economicas',
-        'decanato de ciencias sociales',
-        'ciencias sociales',
+        'decanato de ciencias empresariales',
+        'decano de ciencias empresariales',
+        'ciencias empresariales',
         'decanato de derecho',
-        'derecho',
         'decanato de salud',
         'ciencias de la salud',
         'salud',
+        'jefe de modalidad semipresencial',
+        'jefe semipresencial',
+        'modalidad semipresencial',
         'telefono decanato',
         'teléfono decanato',
         'número decanato',
@@ -621,11 +627,13 @@ async function seed() {
         'nombre del decano',
         'quien es el decano',
         'quién es el decano',
-        'carlos mamani',
-        'ana gutierrez',
-        'roberto vargas',
-        'lucia choque',
-        'jorge pinto',
+        'tania coro',
+        'zandra bellido',
+        'wara alurralde',
+        'jesus escalante',
+        'jesús escalante',
+        'ingrid cuellar',
+        'ingrid cuellar callejas',
       ],
       respuestaDecanatos,
     );
@@ -653,8 +661,9 @@ async function seed() {
         'edificio administrativo',
         'laboratorio',
         'laboratorios',
-        'mapa',
-        'mapas',
+        'mapa del bloque',
+        'mapa de aulas',
+        'mapas de los bloques',
       ],
       respuestaAulas,
     );
@@ -694,6 +703,14 @@ async function seed() {
         'horario biblioteca',
         'horario de la caja',
         'horario caja',
+        'biblioteca',
+        'horario biblioteca',
+        'horario de biblioteca',
+        'horario de la biblioteca',
+        'ubicacion biblioteca',
+        'ubicación biblioteca',
+        'donde esta biblioteca',
+        'dónde está la biblioteca',
       ],
       respuestaAtencion,
     );
@@ -703,21 +720,20 @@ async function seed() {
       [
         'servicios',
         'servicios de la universidad',
-        'biblioteca',
-        'libros',
-        'salas de estudio',
-        'laboratorio de cómputo',
-        'laboratorio de computo',
-        'bienestar estudiantil',
-        'canchas',
-        'gimnasio',
+        'biblioteca virtual',
+        'biblioteca central',
+        'prácticas profesionales',
+        'practicas profesionales',
+        'convenios',
         'cafetería',
         'cafeteria',
         'correo institucional',
         'correo universitario',
         'wifi',
         'internet',
-        'seguro universitario',
+        'descuentos',
+        'descuento',
+        'carnet universitario',
       ],
       respuestaServicios,
     );
@@ -786,8 +802,6 @@ async function seed() {
         'redes y telecomunicaciones',
         'gestión petrolera',
         'gestion petrolera',
-        'gestión ambiental',
-        'gestion ambiental',
         'información de mi carrera',
         'informacion de mi carrera',
         'información sobre mi carrera',
@@ -971,5 +985,4 @@ async function seed() {
     process.exit(1);
   }
 }
-
 seed();
