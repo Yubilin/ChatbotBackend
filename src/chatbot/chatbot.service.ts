@@ -34,8 +34,7 @@ type ContextoRespuesta = {
 //donde esta la api de DeepSeek
 const URL_DEEPSEEK_DEFAULT = 'https://api.deepseek.com/chat/completions';
 // que mensaje mostrar si no hay informacion
-const SIN_INFO = 'Lo siento, no tengo información suficiente para responder esa pregunta o no esta en el contexto';
-
+const SIN_INFO = 'Lo siento, no tengo información suficiente para responder esa pregunta o no esta en contexto';
 @Injectable()
 export class ChatbotService {
   private readonly logger = new Logger(ChatbotService.name);
@@ -129,8 +128,18 @@ export class ChatbotService {
     });
     // Conversacion social
     const social = this.detectarConversacionSocial(texto);
-    if (social && !this.contieneTemaLocal(texto, palabrasClave)) {
-      return { respuesta: social.respuesta, categoria: 'Conversación' };
+    const temasLocales = this.buscarVariasRespuestas(
+      texto,
+      palabrasClave,
+    );
+    // Si hay un tema universitario tiene prioridad sobre el saludo
+    if (temasLocales.length > 0) {
+      // continua con el flujo normal
+    } else if (social) {
+      return {
+        respuesta: social.respuesta,
+        categoria: 'Conversación',
+      };
     }
     //la pregunta contiene una o varias intenciones
     const intenciones = await this.detectarMultiplesIntenciones(mensaje, palabrasClave);
@@ -147,7 +156,6 @@ export class ChatbotService {
     const contextos: ContextoRespuesta[] = []; // pregunta,categorias,datos
     const preguntasSinInformacion: string[] = [];  // preguntas sin informacion
     const categorias = new Set<string>();// pagos, Biblioteca, carreras
-    const idsProcesados = new Set<number>(); // ids ya verificados
     // recorre cada intencion detectada
     for (const intencion of intenciones) {
       const preguntaActual = intencion.pregunta.trim();
@@ -163,9 +171,6 @@ export class ChatbotService {
         preguntasSinInformacion.push(preguntaActual);
         continue;
       }
-      // evitar respuestas duplicadas
-      if (idsProcesados.has(tema.id)) continue;
-      idsProcesados.add(tema.id);
       // obtener la categoria
       const categoria = tema.categoria?.nombre ?? 'General';
       categorias.add(categoria); //guarda la categoria ej la pregunta,la categoría,la información de BD
@@ -241,17 +246,36 @@ export class ChatbotService {
     });
   }
   // detecta si el mensaje es una conversacion social y devuelve la respuesta
-  private detectarConversacionSocial(texto: string): RespuestaSocial | null {
-    const palabrasMensaje = texto.split(' '); // dividir mensajes en palabras
+  private detectarConversacionSocial(
+    texto: string,
+  ): RespuestaSocial | null {
+    const palabrasMensaje = texto.split(' ');
     //recorre las respuestas sociales
     for (const social of this.respuestasSociales) {
       const coincide = social.disparadores.some((disparador) => { // verifica si uno de los disparadores en igual
-        const d = this.normalizar(disparador);
-        if (texto.includes(d)) return true; //si hay disparador
-        if (d.includes(' ')) return false; // si es unfrace nose compara palabra similar
-        return palabrasMensaje.some((pm) => this.palabraSimilar(pm, d)); // compara palabras
-      });
-      if (coincide) return social;
+          const d = this.normalizar(disparador);
+          const esFrase = d.includes(' ');
+          //coincidencia exacta
+          if (esFrase) {
+            return texto.includes(d);//si hay disparador
+          }
+          // Palabras cortas SOLO coincidencia exacta
+          if (d.length <= 4) {
+            return palabrasMensaje.includes(d);
+          }
+          // Palabras largas permitir pequeños errores
+          return palabrasMensaje.some(
+            (palabraMensaje) =>
+              this.palabraSimilar(
+                palabraMensaje,
+                d,
+              ),
+          );
+        },
+      );
+      if (coincide) {
+        return social;
+      }
     }
     return null;
   }
@@ -268,10 +292,13 @@ export class ChatbotService {
         const cantidadPalabras = keyword.split(' ').length;
         puntuacion = cantidadPalabras >= 5 ? 140 : this.puntajePorPalabras[cantidadPalabras - 1]; // asigna la puntuacion segun la cantidad de palabras
         if (this.frasesEspecificas.has(keyword)) puntuacion += 100; // sube puntos
-      } else if (!keyword.includes(' ')) { // si la palabra clave es una sola palabra
-        const coincide = palabrasMensaje.some((pm) => this.palabraSimilar(pm, keyword));
-        if (coincide) puntuacion = 10;
+          } else if (!keyword.includes(' ') && keyword.length >= 6) {
+          const coincide = palabrasMensaje.some((pm) =>this.palabraSimilar(pm, keyword),
+        );
+        if (coincide) {
+        puntuacion = 10;
       }
+    }
       if (puntuacion === 0) continue; // Si esa palabra clave no coincide se ignora
       // se obtiene el id de la respuesta de la palabra clave
       const id = palabra.respuesta.id;

@@ -134,10 +134,11 @@ async function seed() {
       respuestaRepository.create({
         respuesta: `
           Área de Marketing
+
+          Horario de atención: lunes a viernes de 08:00 a 12:30 y de 15:00 a 19:30 Sábado: 8:30 a 12:30 
           Responsable: Lic. Andrés Cueto  (Asesor Comercial).
           Ubicación: Edificio Administrativo, planta baja 
           Celular: 74163220
-          Horario de atención: lunes a viernes de 08:00 a 12:30 y de 15:00 a 19:30 Sábado: 8:30 a 12:30 
           Funciones: comunicación institucional, actividades, campañas y
           difusión de información universitaria. 
 
@@ -320,6 +321,9 @@ async function seed() {
           Ubicacion: En el Bloque C con direcion a la cafeteria de la Universidad 
 
           Sistemas (plataforma): lunes a viernes de 08:00 a 19:00.
+
+          marketing
+          Horario de atención: lunes a viernes de 08:00 a 12:30 y de 15:00 a 19:30 Sábado: 8:30 a 12:30 
 
           Para trámites específicos dirígete al área correspondiente dentro de su horario.
         `.trim(),
@@ -870,7 +874,6 @@ async function seed() {
         'campus',
         'sucursal',
         'sucursales',
-        'mapa',
         'cómo llegar',
         'como llegar',
         'localización',
@@ -893,6 +896,14 @@ async function seed() {
         'en que departamentos esta',
         'dónde estudiar upds',
         'donde estudiar upds',
+        'donde esta la universidad',
+        'dónde está la universidad',
+        'donde esta la upds',
+        'dónde está la upds',
+        'ubicacion universidad',
+        'ubicación universidad',
+        'direccion universidad',
+        'dirección universidad',
       ],
       respuestaubicacionUPDS,
     );
