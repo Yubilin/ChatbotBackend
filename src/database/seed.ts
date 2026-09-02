@@ -276,6 +276,8 @@ async function seed() {
           Bloque A: aulas 1 a 8 (planta baja y primer piso)., computo 1 y computo 2, decanaturas 
           Bloque B: aulas 1 a 8 (segundo piso). Computo 3, laboratorio de física, gabinete de fisioterapia 
           Bloque C: aulas 1 a 8, salón auditorio, baños 
+          Bloque E: aulas 1 a 8 ultimo piso de la univercidad 
+          Bloque F: aulas 1 a 8, Ultimo piso, ubicado en el bloque de medicina 
           Edificio Administrativo: marketing, registros, cajas, sistemas, rectorado
 
           Cada aula tiene su número visible en la puerta; puedes guiarte por los mapas
@@ -313,6 +315,8 @@ async function seed() {
     const respuestaAtencion = await respuestaRepository.save(
       respuestaRepository.create({
         respuesta: `
+          horas de atención
+
           Atención general: lunes a viernes de 08:00 a 19:30 
 
           Caja Central: lunes a viernes de 08:00 a 19:30
@@ -322,8 +326,9 @@ async function seed() {
 
           Sistemas (plataforma): lunes a viernes de 08:00 a 19:00.
 
-          marketing
-          Horario de atención: lunes a viernes de 08:00 a 12:30 y de 15:00 a 19:30 Sábado: 8:30 a 12:30 
+          marketing: Horario de atención: lunes a viernes de 08:00 a 12:30 y de 15:00 a 19:30 Sábado: 8:30 a 12:30 
+
+          clases: Turno Mañana: 08:00 a 11:00 Turno Tarde: 14:30 a 17:30 Turno Noche: 19:00 a 22:00 
 
           Para trámites específicos dirígete al área correspondiente dentro de su horario.
         `.trim(),
@@ -336,7 +341,7 @@ async function seed() {
         respuesta: `
           Servicios de la Universidad
 
-          Oportunidades de prácticas profesionales mediante convenios
+          Beneficios: oportunidades de prácticas profesionales mediante convenios
           Cafetería 3er piso 
           Biblioteca virtual y Biblioteca Central
           Correo institucional: se asigna a cada estudiante al momento de la inscripción.
@@ -347,6 +352,10 @@ async function seed() {
           ya que todas las sedes usan el mismo plan de estudios y sistema modular. Además, esta
           enorme red nacional multiplica tus opciones de prácticas profesionales por sus convenios
           en todo el país.
+          semi preceial: La modalidad semipresencial de la Universidad Privada Domingo Savio sede Sucre es un sistema 
+          educativo flexible diseñado para que personas que trabajan, tienen responsabilidades familiares
+          o viven lejos de la ciudad puedan obtener un título universitario sin descuidar sus actividades cotidianas
+          solo asistir únicamentem los dias sábados en el turno mañana de 08:00am a 12:00 pm.
         `.trim(),
         categoria: servicios,
       }),
@@ -452,14 +461,23 @@ async function seed() {
         respuesta: `
           Información de becas UPDS 
 
-          Una beca es una ayuda que brinda la UPDS a los estudiantes 
+          Una beca es una ayuda que brinda la UPDS a los estudiantes
           para reducir o cubrir parte de los costos de sus estudios.
           La universidad ofrece diferentes tipos de becas por excelencia académica
           Cada beca tiene requisitos y porcentajes de cobertura diferentes.
 
-          La Universidad Privada Domingo Sabio sucre ofrece beca estudio
-          del 50% y 100% en relación a tu rendimiento académico y notas
-          para mas informacion comunicate con Marketing
+          Becas de estudio UPDS Sede Sucre
+
+          La Universidad Privada Domingo Savio (UPDS) sede Sucre, ofrece becas de estudio 
+          a los estudiantes de acuerdo con su rendimiento académico y sus notas
+          Se ofrece beca estudio del 50% y 100% en relación a tu rendimiento academico
+
+          Para acceder a la beca:
+          El estudiante debe solicitar formalmente la beca al momento de realizar su inscripción.
+          El estudiante debe cumplir con los requisitos establecidos por la universidad.
+
+          Información adicional:
+          Para obtener más información sobre las becas y sus requisitos, el estudiante debe comunicarse con el área de Marketing.
 
         `.trim(),
         categoria: becas,
@@ -661,6 +679,8 @@ async function seed() {
         'bloque a',
         'bloque b',
         'bloque c',
+        'bloque e',
+        'bloque f',
         'edificio',
         'edificio administrativo',
         'laboratorio',
